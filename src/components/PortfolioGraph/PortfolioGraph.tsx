@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from "react";
-import * as Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
+import { Line } from "react-chartjs-2";
 
-export const PortfolioGraph: React.FC = () => {
+export const PortfolioGraph: React.FC<{ portfolioValue: number }> = ({
+  portfolioValue,
+}) => {
+  const months: string[] = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   const hashtags: string[] = [
     "To the Moon 🚀",
     "Diamond Hands 💎🤲",
@@ -12,21 +28,42 @@ export const PortfolioGraph: React.FC = () => {
     hashtags[Math.floor(Math.random() * hashtags.length)];
   const [hashtag, setHastag] = useState<string | null>(null);
 
+  let currYear = new Date().getFullYear();
+
   useEffect(() => {
     setHastag(randomHashtag);
   }, []);
 
-  const options: Highcharts.Options = {
-    title: {
-      text: "Portfolio",
-    },
-    series: [
+  const data: Object = {
+    type: "Line",
+    labels: months,
+    datasets: [
       {
-        type: "line",
-        color: "#10b981",
-        data: [1200, 1287, 1465, 1345, 1290, 1680],
+        label: currYear,
+        data: [10300, 14207, 15932, 13234, 17549],
+        fill: false,
+        backgroundColor: "rgba(16, 185, 129,1)",
+        borderColor: "rgba(16, 185, 129,1)",
+        pointBackgroundColor: "rgba(16, 185, 129,1)",
       },
     ],
+  };
+
+  const options = {
+    title: {
+      position: "top",
+      display: "true",
+      text: "Portfolio",
+    },
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
   };
 
   return (
@@ -39,7 +76,10 @@ export const PortfolioGraph: React.FC = () => {
         <div className="mt-16">
           <h3 className="text-xs tracking-wider uppercase">Equity Value</h3>
           <h1 className="text-4xl">
-            $42,069<span className="text-xl">.90</span>
+            ${portfolioValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            <span className="text-xl">
+              {portfolioValue.toString().slice(-2)}
+            </span>
           </h1>
         </div>
         <div className="mt-3 mb-8">
@@ -48,7 +88,8 @@ export const PortfolioGraph: React.FC = () => {
         </div>
       </div>
       <div className="w-2/3">
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <h1 className="-mt-2 flex justify-center text-3xl">Portfolio</h1>
+        <Line data={data} options={options} type={"Line"} />
       </div>
     </div>
   );
